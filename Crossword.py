@@ -98,10 +98,12 @@ def Collect():
         self.Populate()
         self.LettSet()
         self.WrdsSet()
-#Temporary Stuff
-"""B=Board(15)
-B.FullSetup()
-print(B)
-print(B.wrds)
-print(len(B.wrds))"""
-print(1 in [1,2])
+
+if __name__ == "__main__":
+    #Temporary Stuff
+    """B=Board(15)
+    B.FullSetup()
+    print(B)
+    print(B.wrds)
+    print(len(B.wrds))"""
+    print(1 in [1,2])
