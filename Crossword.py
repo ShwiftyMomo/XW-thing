@@ -4,11 +4,13 @@ import numpy as np
 #Makeing the alphabet
 alph = "a b c d e f g h i j k l m n o p q r s t u v w x y z".split(" ")
 #Checking if an individual word fits a criteria
-def Check(word,criteria):
+def Check(word,criterias):
     if len(word) != len(criteria):
         return False
-    for k,letter in enumerate(criteria):
-        if letter != "." and letter != word[k]:
+    for letter in criteria:
+        if type(letter) == str:
+            letter = [letter]
+        if letter != "." and letter not in word[k]:
                 return False
         return True
 #Cleans data: Removes 3 letter words+ Proper Nouns
@@ -31,7 +33,7 @@ def Collect():
     RawDatabase = open("/usr/share/dict/words", "r")
     return Cleanse(RawDatabase.readlines())
 #Defining the Crossword-Board class
-class Board:
+#class Board:
     #Define the Crossword's variables
     def __init__(self,size):
         # All the squares on the board
@@ -97,8 +99,9 @@ class Board:
         self.LettSet()
         self.WrdsSet()
 #Temporary Stuff
-B=Board(15)
+"""B=Board(15)
 B.FullSetup()
 print(B)
 print(B.wrds)
-print(len(B.wrds))
+print(len(B.wrds))"""
+print(1 in [1,2])
