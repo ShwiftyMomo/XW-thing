@@ -1,6 +1,7 @@
 from Crossword import Collect
 import string
 import time
+import random
 
 class directions:
     RIGHT = 0
@@ -21,13 +22,16 @@ class Crossword:
                 self.tiles[x].append(None)
 
     def __str__(self):
+        tiles = list(zip(*self.tiles))
         return '\n'.join([
-            '|'.join([
-                tile == None and "-" or 
-                    ''.join(tile.chars)
-                for tile in row
+            ''.join([
+                tile == None and "#" or (
+                    len(tile.chars) == 0 and "-" or 
+                    len(tile.chars) == 1 and tile.chars[0] or
+                    '['+''.join(tile.chars)+']'
+                ) for tile in row
             ])
-            for row in self.tiles
+            for row in tiles
         ])
 
     def generateWords(self, limit=1):
@@ -76,9 +80,11 @@ class Crossword:
         word.populate()
 
     def chooseWords(self):
-        word = self.word[0]
-        word.select()
-        #if len(word.words):
+        i = 0
+        while i < len(self.word):
+            if len(self.word[i].words) > 1:
+                self.word[i].select()
+            i += 1
 
     def getTile(self, x, y):
         if self.tiles[x][y] == None:
@@ -116,6 +122,7 @@ class Word:
         self.y = y
         self.direction = direction
         self.selected = False
+        self.words = []
 
         self.length = 0
         self.tiles = []
@@ -147,7 +154,9 @@ class Word:
 
     def populate(self):
         if not self.selected:
+            old = self.words
             self.words = self.board.getWords(self.tiles)
+            print(list(set(old) - set(self.words)))
         for tile in self.tiles:
             tile.limit(self)
 
@@ -155,13 +164,10 @@ class Word:
         if len(self.words) <= 1:
             print("attemted to select word with one word!")
             return
+        self.selected = True
+        #self.words = [self.words[random.randint(0,len(self.words) - 1)]]
         self.words = [self.words[0]]
-        print(self.words)
         self.populate()
-
-        
-        
-
 
 class Tile:
     def __init__(self, board, x, y, chars=list(string.ascii_lowercase)):
@@ -184,44 +190,63 @@ class Tile:
             char = w[self.words[word]]
             if char not in chars:
                 chars.append(char)
-        
+
         if self.shouldReaload(chars):
             self.chars = chars
 
-            #print("realoading")
             print(self.board)
-            #print(chars)
             print()
-            time.sleep(1)
 
             for w in self.words:
                 if w is not word:
                     w.populate()
-        else:
-            self.chars = chars
 
-            print(self.board)
-            #print(chars)
-            print()
-            time.sleep(1)
-
-
-if __name__ == "__main__":
-    words = Collect()
-
-    board = [
-        [' ', ' ', ' ',' '],
-        [' ', '#', '#','#'],
-        [' ', '#', '#','#'],
-    ]
-
+def test(words, board, expected):
+    print("----------------------")
     crossword = Crossword(
         words=words,
         board=board
     )
-
     crossword.generateWords()
     crossword.populateWords()
-    crossword.chooseWords()
 
     print(crossword)
+    print()
+
+    if True:
+        crossword.chooseWords()
+
+        print(crossword)
+        print()
+
+
+if __name__ == "__main__":
+    test(
+        words = [
+            "card",
+            "over",
+            "lily",
+            "dde",
+
+            "cold",
+            "avid",
+            "rele",
+            "dry"
+        ],
+        board = [
+            "    ",
+            "    ",
+            "    ",
+            "   #"
+        ],
+        expected = [
+            "card",
+            "over",
+            "lily",
+            "dde#"
+            
+        ]
+    )
+
+    
+    
